@@ -1,1 +1,150 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Juego de Cálculo</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="timer.css"><script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><h1>Juego de Cálculo</h1><div id="instructions" class="instructions-box"><p style="position:relative"><strong>¿Cómo jugar?</strong></p><ul><li>Haz clic en dos cartas rosas para revelar un número objetivo de dos dígitos.</li><li>Usa los números rojos visibles (1 al 9) para construir una operación.</li><li id="usar-los-tres-operadores">Debes usar los tres operadores <strong>en orden</strong>: multiplicación (*), suma (+), y resta (-).</li><li id="multiplicar-por-1"><strong>No está permitido multiplicar por 1.</strong></li><li>Puedes reiniciar el juego cuando quieras.</li><li>Presiona "Comprobar" antes de que se acabe el tiempo.</li></ul></div><div id="hidden-cards" class="card-container"><div id="cardResponsiveRow1"></div><div id="cardResponsiveRow2"></div></div><h2 id="target-number" style="color:orange"></h2><div id="visible-cards" class="card-container"><div><div class="card visible" data-value="1" onclick="pushNumber(this)">1</div><div class="card visible" data-value="2" onclick="pushNumber(this)">2</div><div class="card visible" data-value="3" onclick="pushNumber(this)">3</div><div class="card visible" data-value="4" onclick="pushNumber(this)">4</div></div><div><div class="card visible" data-value="5" onclick="pushNumber(this)">5</div><div class="card visible" data-value="6" onclick="pushNumber(this)">6</div><div class="card visible" data-value="7" onclick="pushNumber(this)">7</div><div class="card visible" data-value="8" onclick="pushNumber(this)">8</div><div class="card visible" data-value="9" onclick="pushNumber(this)">9</div></div></div><div id="operators" class="card-container"><button class="operator" data-op="*">×</button> <button class="operator" data-op="+">+</button> <button class="operator" data-op="-">−</button></div><input type="text" id="expression" class="expression-box" placeholder="Ejemplo: 25 x 4 + 6 - 9 = 97"><div><b hidden id="buzzer">&#128264;</b> <b id="timer" class="timer-box">Tiempo: 60</b></div><div><button id="check" class="action-btn check-btn">Comprobar</button> <button id="reset" class="action-btn reset-btn">Reiniciar Juego</button></div><p id="message" class="message-box"></p><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alta de Apunte</title>
+  <!-- Materialize CSS CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <style>
+    .user-info {
+      margin-right: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header/Nav -->
+  <nav>
+    <div class="nav-wrapper teal">
+      <a href="#!" class="brand-logo" style="margin-left: 15px;">Apunt.AR</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="#">Perfil</a></li>
+        <li><a href="#">Cargar Apunte</a></li>
+        <li><a href="#">Subidos</a></li>
+        <li><a href="#">Destacados</a></li>
+        <li class="user-info">
+          <span class="white-text">usuario@mail.com | Rango: 87 pts</span>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Formulario -->
+  <div class="container">
+    <h5 class="teal-text text-darken-2">Cargar nuevo apunte</h5>
+    <div class="row">
+      <form class="col s12">
+        
+        <!-- Universidad con Autocomplete -->
+        <div class="input-field col s12">
+          <input type="text" id="universidad" class="autocomplete">
+          <label for="universidad">Universidad</label>
+        </div>
+
+        <!-- Carrera -->
+        <div class="input-field col s12">
+          <input type="text" id="carrera">
+          <label for="carrera">Carrera</label>
+        </div>
+
+        <!-- Materia -->
+        <div class="input-field col s12">
+          <input type="text" id="materia">
+          <label for="materia">Materia</label>
+        </div>
+
+        <!-- Fecha -->
+        <div class="input-field col s12">
+          <input type="text" class="datepicker" id="fecha">
+          <label for="fecha">Fecha</label>
+        </div>
+
+        <!-- Checkbox Pago o Gratis -->
+        <div class="col s12">
+          <label>
+            <input type="checkbox" id="esPago" />
+            <span>Aplicar a pago (desmarcado = gratis)</span>
+          </label>
+        </div>
+
+        <!-- Campos condicionales si es pago -->
+        <div id="opcionesPago" class="col s12 hidden">
+          <div class="input-field col s12">
+            <input type="number" id="paginasFree">
+            <label for="paginasFree">Hasta cuántas páginas son gratis</label>
+          </div>
+          <div class="input-field col s12">
+            <input type="number" id="monto">
+            <label for="monto">Monto (ARS)</label>
+          </div>
+        </div>
+
+        <!-- Botón de Enviar -->
+        <div class="col s12">
+          <button class="btn waves-effect teal" type="submit">Subir Apunte
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Materialize JS & jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Inicializar datepicker
+      var dateElems = document.querySelectorAll('.datepicker');
+      M.Datepicker.init(dateElems, {
+        format: 'dd/mm/yyyy',
+        i18n: { cancel: 'Cancelar', clear: 'Limpiar', done: 'Aceptar' }
+      });
+
+      // Inicializar Autocomplete con universidades
+      var autocompleteElems = document.querySelectorAll('.autocomplete');
+      M.Autocomplete.init(autocompleteElems, {
+        data: {
+          "UBA - Universidad de Buenos Aires": null,
+          "UNLP - La Plata": null,
+          "UNC - Córdoba": null,
+          "UNR - Rosario": null,
+          "UNT - Tucumán": null,
+          "UNL - Litoral": null,
+          "UNNE - Nordeste": null,
+          "UNSa - Salta": null,
+          "UNSJ - San Juan": null,
+          "UNS - Sur": null,
+          "UNComa - Comahue": null,
+          "UNRC - Río Cuarto": null,
+          "UNMdP - Mar del Plata": null,
+          "UNSE - Santiago del Estero": null,
+          "UNVM - Villa María": null,
+          "UNLa - Lanús": null,
+          "UNQ - Quilmes": null,
+          "UNPA - Patagonia Austral": null,
+          "UNPSJB - Patagonia San Juan Bosco": null,
+          "UNTREF - Tres de Febrero": null
+        }
+      });
+
+      // Mostrar/Ocultar campos de pago
+      const esPagoCheckbox = document.getElementById('esPago');
+      const opcionesPago = document.getElementById('opcionesPago');
+
+      esPagoCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+          opcionesPago.classList.remove('hidden');
+        } else {
+          opcionesPago.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
