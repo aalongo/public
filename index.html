@@ -18,6 +18,11 @@
     .hidden {
       display: none;
     }
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -42,55 +47,71 @@
   <div class="container">
     <h5 class="blue-text text-darken-2">Cargar nuevo apunte</h5>
     <div class="row">
-      <form class="col s12">
+      <form class="col s12" id="apunteForm">
 
         <!-- Universidad con Autocomplete -->
         <div class="input-field col s12">
-          <input type="text" id="universidad" class="autocomplete">
+          <input type="text" id="universidad" class="autocomplete" required>
           <label for="universidad">Universidad</label>
         </div>
 
         <!-- Carrera -->
         <div class="input-field col s12">
-          <input type="text" id="carrera">
+          <input type="text" id="carrera" required>
           <label for="carrera">Carrera</label>
         </div>
 
         <!-- Materia -->
         <div class="input-field col s12">
-          <input type="text" id="materia">
+          <input type="text" id="materia" required>
           <label for="materia">Materia</label>
         </div>
 
         <!-- Fecha -->
         <div class="input-field col s12">
-          <input type="text" class="datepicker" id="fecha">
+          <input type="text" class="datepicker" id="fecha" required>
           <label for="fecha">Fecha</label>
         </div>
 
-        <!-- Checkbox Pago o Gratis -->
-        <div class="col s12">
-          <label>
-            <input type="checkbox" id="esPago" />
-            <span>Aplicar a pago (desmarcado = gratis)</span>
-          </label>
+        <!-- Archivo -->
+        <div class="file-field input-field col s12">
+          <div class="btn blue">
+            <span>Archivo</span>
+            <input type="file" id="archivo" accept="application/pdf" required>
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" placeholder="Subí un PDF">
+          </div>
+          <span id="fileError" class="error"></span>
+        </div>
+
+        <!-- Switch Pago o Gratis -->
+        <div class="col s12 margin-top-20">
+          <div class="switch">
+            <label class="black-text" style="font-weight: 500; font-size: 16px;">
+              <span style="margin-right: 10px;">Gratis</span>
+              <input type="checkbox" id="esPago">
+              <span class="lever"></span>
+              <span style="margin-left: 10px;">Pago</span>
+            </label>
+          </div>
         </div>
 
         <!-- Campos condicionales si es pago -->
         <div id="opcionesPago" class="col s12 hidden">
           <div class="input-field col s12">
-            <input type="number" id="paginasFree">
+            <input type="number" id="paginasFree" min="0">
             <label for="paginasFree">Hasta cuántas páginas son gratis</label>
           </div>
           <div class="input-field col s12">
-            <input type="number" id="monto">
+            <input type="number" id="monto" min="0">
             <label for="monto">Monto (ARS)</label>
           </div>
         </div>
 
         <!-- Botón de Enviar -->
         <div class="col s12">
-          <button class="btn waves-effect blue" type="submit">
+          <button class="btn waves-effect blue" type="submit" style="margin-top: 20px;">
             Subir Apunte
             <i class="material-icons right">upload</i>
           </button>
@@ -100,7 +121,7 @@
     </div>
   </div>
 
-  <!-- Materialize JS + Autocomplete + Datepicker -->
+  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -139,11 +160,41 @@
       });
 
       // Mostrar/Ocultar campos de pago
-      const esPagoCheckbox = document.getElementById('esPago');
+      const esPago = document.getElementById('esPago');
       const opcionesPago = document.getElementById('opcionesPago');
 
-      esPagoCheckbox.addEventListener('change', function () {
-        opcionesPago.classList.toggle('hidden', !this.checked);
+      esPago.addEventListener('change', () => {
+        opcionesPago.classList.toggle('hidden', !esPago.checked);
+      });
+
+      // Validación de archivo
+      const form = document.getElementById('apunteForm');
+      const archivoInput = document.getElementById('archivo');
+      const fileError = document.getElementById('fileError');
+
+      form.addEventListener('submit', (e) => {
+        const archivo = archivoInput.files[0];
+
+        if (!archivo) {
+          fileError.textContent = 'Debes subir un archivo PDF.';
+          e.preventDefault();
+          return;
+        }
+
+        if (archivo.type !== 'application/pdf') {
+          fileError.textContent = 'El archivo debe ser un PDF.';
+          e.preventDefault();
+          return;
+        }
+
+        if (archivo.size > 10 * 1024 * 1024) { // 10MB
+          fileError.textContent = 'El archivo no debe superar los 10MB.';
+          e.preventDefault();
+          return;
+        }
+
+        fileError.textContent = '';
+        // Si todo está bien, se puede enviar normalmente
       });
     });
   </script>
