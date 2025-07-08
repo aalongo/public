@@ -5,16 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alta de Apunte</title>
 
-  <!-- Materialize CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-
-  <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <style>
-    .user-info {
-      margin-right: 20px;
+    .dropdown-content {
+      min-width: 250px !important;
+      white-space: normal !important;
     }
+
+    /* Opcional: evita que el texto se desborde del <a> */
+    .dropdown-content li > a {
+      white-space: normal;
+      line-height: 1.4;
+      padding: 10px 16px;
+    }
+
     .hidden {
       display: none;
     }
@@ -22,6 +29,33 @@
       color: red;
       font-size: 0.9rem;
       margin-top: 5px;
+    }
+
+    .tag-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 0;
+    }
+
+    .tag {
+      background-color: #2196f3;
+      color: white;
+      border-radius: 50px;
+      padding: 5px 15px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+
+    .tag .remove-tag {
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    textarea::-webkit-scrollbar {
+      display: none;
     }
   </style>
 </head>
@@ -31,52 +65,81 @@
   <nav>
     <div class="nav-wrapper blue">
       <a href="#!" class="brand-logo" style="margin-left: 15px;">ApuntAR</a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="#">Perfil</a></li>
+      <a href="#" data-target="mobile-menu" class="sidenav-trigger right">
+        <i class="material-icons">menu</i>
+      </a>
+      <ul id="dropdown1" class="dropdown-content collection">
+        <li><a href="#!">Programa de Visualización e Interfaces</a></li>
+        <li><a href="#!">Accesibilidad a los contenidos audiovisuales en la web</a></li>
+      </ul>
+
+      <ul class="center hide-on-med-and-down" style="position: absolute; left: 50%; transform: translateX(-50%);">
         <li><a href="#">Cargar Apunte</a></li>
+        <li><a href="#">Perfil</a></li>
         <li><a href="#">Subidos</a></li>
-        <li><a href="#">Destacados</a></li>
+        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Destacados<i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+      <ul class="right hide-on-med-and-down" style="margin-right: 15px;">
         <li class="user-info">
-          <span class="white-text">usuario@mail.com | Rango: 87 pts</span>
+          <span class="white-text">Juan Gonzalez | Rango: 87</span>
         </li>
       </ul>
     </div>
   </nav>
+ 
+  <ul class="sidenav" id="mobile-menu">
+    <li><a href="#">Cargar Apunte</a></li>
+    <li><a href="#">Perfil</a></li>
+    <li><a href="#">Subidos</a></li>
+    <li><a href="#">Destacados</a></li>
+    <li><div class="divider"></div></li>
+    <li><span class="grey-text" style="padding-left: 15px;">Juan Gonzalez | Rango: 87</span></li>
+  </ul>
+  
+  <div class="fixed-action-btn direction-bottom" style="position: fixed; top: 70px; right: 15px;">
+    <a class="btn-floating btn-large red pulse tooltipped" data-position="left" data-tooltip="Acelera tu aprendisaje con IA">
+      <i class="large material-icons">data_usage</i>
+    </a>
+    <ul>
+      <li>
+        <a class="btn-floating red tooltipped" data-position="left" data-tooltip="Chatea con Apunt.IA">
+          <i class="material-icons">chat</i>
+        </a>
+      </li>
+      <li>
+        <a id="upload-btn" class="btn-floating blue tooltipped" data-position="left" data-tooltip="Subir apunte para descargar ejercisios">
+          <i class="material-icons">publish</i>
+        </a>
+        <input type="file" id="hidden-file-input" style="display: none;">
+      </li>
+      <li>
+        <a class="btn-floating yelow tooltipped" data-position="left" data-tooltip="Generar ejercisios basados en tus apuntes destacados">
+          <i class="material-icons">class</i>
+        </a>
+      </li>
+    </ul>
+  </div>
 
   <!-- Formulario -->
-  <div class="container">
-    <h5 class="blue-text text-darken-2">Cargar nuevo apunte</h5>
+  <div class="container"> <br>
+    <h5 class="blue-text">Cargar nuevo apunte</h5> <br>
     <div class="row">
       <form class="col s12" id="apunteForm">
-
-        <!-- Universidad con Autocomplete -->
         <div class="input-field col s12">
-          <input type="text" id="universidad" class="autocomplete" required>
-          <label for="universidad">Universidad</label>
+          <input type="text" id="uniInput" autocomplete="off">
+          <label for="uniInput">Universidad</label>
         </div>
-
-        <!-- Carrera -->
-        <div class="input-field col s12">
-          <input type="text" id="carrera" required>
-          <label for="carrera">Carrera</label>
+        <div class="input-field col s12" id="career-field">
+          <input type="text" id="careerInput">
+          <label for="careerInput" class="active">Carrera</label>
         </div>
-
-        <!-- Materia -->
         <div class="input-field col s12">
           <input type="text" id="materia" required>
           <label for="materia">Materia</label>
         </div>
-
-        <!-- Fecha -->
-        <div class="input-field col s12">
-          <input type="text" class="datepicker" id="fecha" required>
-          <label for="fecha">Fecha</label>
-        </div>
-
-        <!-- Archivo -->
         <div class="file-field input-field col s12">
           <div class="btn blue">
-            <span>Archivo</span>
+            <span>Archivo          <i class="material-icons right">upload</i> </span>
             <input type="file" id="archivo" accept="application/pdf" required>
           </div>
           <div class="file-path-wrapper">
@@ -84,8 +147,6 @@
           </div>
           <span id="fileError" class="error"></span>
         </div>
-
-        <!-- Switch Pago o Gratis -->
         <div class="col s12 margin-top-20">
           <div class="switch">
             <label class="black-text" style="font-weight: 500; font-size: 16px;">
@@ -109,11 +170,18 @@
           </div>
         </div>
 
-        <!-- Botón de Enviar -->
+        <div class="input-field col s12">
+          <div class="input-field">
+            <label for="tagInput" class="active">Tags (Haz que te enceuntren incorporando)</label>
+            <div class="tag-box" id="tagContainer"></div>
+            <textarea id="tagInput" class="materialize-textarea" placeholder="Escriba y presione Enter para generar tags"></textarea>
+          </div>
+        </div>
+
         <div class="col s12">
           <button class="btn waves-effect blue" type="submit" style="margin-top: 20px;">
             Subir Apunte
-            <i class="material-icons right">upload</i>
+            <i class="material-icons right">send</i>
           </button>
         </div>
 
@@ -121,21 +189,82 @@
     </div>
   </div>
 
+  <footer class="page-footer blue">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">ApuntAR</h5>
+          <p class="grey-text text-lighten-4">Estudiar nunca fue tan fácil. </p>
+        </div>
+        <div class="col l4 offset-l2 s12">
+          <h5 class="white-text">Links</h5>
+          <ul>
+            <li><a class="grey-text text-lighten-3" href="#!">Contacto</a></li>
+            <li><a class="grey-text text-lighten-3" href="#!">Términos y condiciones</a></li>
+            <li><a class="grey-text text-lighten-3" href="#!">Política de Privacidad</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright" style="margin-left: 10px;">
+      <ul>
+        <li style="display: inline-block;"><i class="fa fa-youtube-play" style="font-size:25px;color:red"></i></li>
+        <li style="display: inline-block;"><img src="https://static.cdninstagram.com/rsrc.php/v4/yI/r/VsNE-OHk_8a.png" width="20"></li>
+        <li style="display: inline-block;"><img src="https://sf-static.tiktokcdn.com/obj/eden-sg/uhtyvueh7nulogpoguhm/tiktok-icon2.png" width="20"></li>
+        <li style="display: inline-block;"><i class="fa fa-linkedin-square" style="font-size:25px;color:blue"></i></li>
+      </ul>
+      <div class="container">
+      © COPYRIGHT 2025 <b>apunt.ar</b> v2.1.0. Todos los derechos reservados.
+      <a class="grey-text text-lighten-4 right" href="#!">UNLAM - Visualizacion e Interfaces</a>
+      </div>
+    </div>
+  </footer>
+
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Datepicker
-      var dateElems = document.querySelectorAll('.datepicker');
-      M.Datepicker.init(dateElems, {
-        format: 'dd/mm/yyyy',
-        i18n: { cancel: 'Cancelar', clear: 'Limpiar', done: 'Aceptar' }
-      });
 
-      // Autocomplete
-      var autocompleteElems = document.querySelectorAll('.autocomplete');
-      M.Autocomplete.init(autocompleteElems, {
-        data: {
+    document.addEventListener('DOMContentLoaded', function () {
+      var elems = document.querySelectorAll('.sidenav');
+      M.Sidenav.init(elems);
+      var elems = document.querySelectorAll('.dropdown-trigger');
+      M.Dropdown.init(elems, {
+        hover: true, 
+        coverTrigger: false, 
+        constrainWidth: false 
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.fixed-action-btn');
+      var instances = M.FloatingActionButton.init(elems);
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+    // Inicializa tooltips
+    var tooltips = document.querySelectorAll('.tooltipped');
+    M.Tooltip.init(tooltips);
+
+    // Asocia clic del botón al input file oculto
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileInput = document.getElementById('hidden-file-input');
+
+    uploadBtn.addEventListener('click', function () {
+      fileInput.click();
+    });
+
+    // (Opcional) Manejar archivo seleccionado
+    fileInput.addEventListener('change', function () {
+      if (fileInput.files.length > 0) {
+        const fileName = fileInput.files[0].name;
+        M.toast({ html: 'Archivo seleccionado: ' + fileName });
+      }
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const unis = {
+          "UNLaM - Universidad Nacional de La Matanza": null,
           "UBA - Universidad de Buenos Aires": null,
           "UNLP - La Plata": null,
           "UNC - Córdoba": null,
@@ -156,47 +285,121 @@
           "UNPA - Patagonia Austral": null,
           "UNPSJB - Patagonia San Juan Bosco": null,
           "UNTREF - Tres de Febrero": null
-        }
+      };
+
+      const unlamCarreras = [
+        "Tecnicatura en Desarrollo WEB", 
+        "Ingeniería en Civil", "Ingeniería en Electrónica", "Ingeniería en Informática",
+        "Ingeniería Industrial", "Ingeniería Mecánica", "Arquitectura", "Contador Público",
+        "Licenciatura en Administración", "Licenciatura en Comercio Internacional",
+        "Licenciatura en Comunicación Social", "Licenciatura en Ciencia Política",
+        "Licenciatura en Derecho", "Licenciatura en Economía",
+        "Licenciatura en Educación Física", "Licenciatura en Enfermería",
+        "Licenciatura en Nutrición", "Licenciatura en Kinesiología y Fisiatría",
+        "Licenciatura en Trabajo Social", "Abogacía", "Procurador/a", "Médico"
+      ];
+
+      // Inicializa autocomplete
+      M.Autocomplete.init(document.getElementById('uniInput'), {
+        data: unis,
+        onAutocomplete: uni => handleUniversitySelect(uni)
       });
 
-      // Mostrar/Ocultar campos de pago
-      const esPago = document.getElementById('esPago');
-      const opcionesPago = document.getElementById('opcionesPago');
+      const careerInput = document.getElementById('careerInput');
+      const careerField = document.getElementById('career-field');
+      let careerAutocomplete;
 
-      esPago.addEventListener('change', () => {
-        opcionesPago.classList.toggle('hidden', !esPago.checked);
-      });
-
-      // Validación de archivo
-      const form = document.getElementById('apunteForm');
-      const archivoInput = document.getElementById('archivo');
-      const fileError = document.getElementById('fileError');
-
-      form.addEventListener('submit', (e) => {
-        const archivo = archivoInput.files[0];
-
-        if (!archivo) {
-          fileError.textContent = 'Debes subir un archivo PDF.';
-          e.preventDefault();
-          return;
+      function handleUniversitySelect(uni) {
+        if (uni === "UNLaM - Universidad Nacional de La Matanza") {
+          if (careerAutocomplete) {
+            careerAutocomplete.destroy();
+          }
+          careerAutocomplete = M.Autocomplete.init(careerInput, {
+            data: unlamCarreras.reduce((a, c) => (a[c] = null, a), {}),
+            minLength: 1
+          });
+          careerInput.value = '';
+        } else {
+          if (careerAutocomplete) careerAutocomplete.destroy();
+          careerInput.value = '';
+          careerInput.removeAttribute('data-input');
+          careerInput.classList.remove('autocomplete');
         }
-
-        if (archivo.type !== 'application/pdf') {
-          fileError.textContent = 'El archivo debe ser un PDF.';
-          e.preventDefault();
-          return;
-        }
-
-        if (archivo.size > 10 * 1024 * 1024) { // 10MB
-          fileError.textContent = 'El archivo no debe superar los 10MB.';
-          e.preventDefault();
-          return;
-        }
-
-        fileError.textContent = '';
-        // Si todo está bien, se puede enviar normalmente
-      });
+        M.updateTextFields();
+      }
     });
+
+    // Mostrar/Ocultar campos de pago
+    const esPago = document.getElementById('esPago');
+    const opcionesPago = document.getElementById('opcionesPago');
+
+    esPago.addEventListener('change', () => {
+      opcionesPago.classList.toggle('hidden', !esPago.checked);
+    });
+
+    // Validación de archivo
+    const form = document.getElementById('apunteForm');
+    const archivoInput = document.getElementById('archivo');
+    const fileError = document.getElementById('fileError');
+
+    form.addEventListener('submit', (e) => {
+      const archivo = archivoInput.files[0];
+
+      if (!archivo) {
+        fileError.textContent = 'Debes subir un archivo PDF.';
+        e.preventDefault();
+        return;
+      }
+
+      if (archivo.type !== 'application/pdf') {
+        fileError.textContent = 'El archivo debe ser un PDF.';
+        e.preventDefault();
+        return;
+      }
+
+      if (archivo.size > 10 * 1024 * 1024) { // 10MB
+        fileError.textContent = 'El archivo no debe superar los 10MB.';
+        e.preventDefault();
+        return;
+      }
+
+      fileError.textContent = '';
+      // Si todo está bien, se puede enviar normalmente
+    });
+    
+    const tagInput = document.getElementById('tagInput');
+    const tagContainer = document.getElementById('tagContainer');
+    const tags = [];
+
+    tagInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const value = tagInput.value.trim();
+        if (value !== '' && !tags.includes(value)) {
+          tags.push(value);
+          renderTags();
+          tagInput.value = '';
+        }
+      }
+    });
+
+    function renderTags() {
+      tagContainer.innerHTML = '';
+      tags.forEach((tag, index) => {
+        const tagEl = document.createElement('span');
+        tagEl.className = 'tag';
+        tagEl.innerHTML = `
+          ${tag}
+          <span class="remove-tag" onclick="removeTag(${index})">&times;</span>
+        `;
+        tagContainer.appendChild(tagEl);
+      });
+    }
+
+    function removeTag(index) {
+      tags.splice(index, 1);
+      renderTags();
+    }
   </script>
 
 </body>
